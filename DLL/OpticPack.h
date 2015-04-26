@@ -10,8 +10,9 @@
 
 namespace Optic {
 
-BOOST_STRONG_TYPEDEF(std::uint8_t, imageBin);
-BOOST_STRONG_TYPEDEF(std::uint8_t, audioBin);
+typedef std::uint8_t imageBin;
+typedef std::uint8_t audioBin;
+
 typedef std::pair<size_t, std::shared_ptr<const imageBin>> OpticImage;
 typedef std::pair<size_t, std::shared_ptr<const audioBin>> OpticAudio;
 
@@ -29,7 +30,6 @@ struct OpticPackMeta {
 };
 
 class OpticPack {
-	mutable bool init;
 	mutable HZIP handle;
 	mutable OpticPackMeta metadata;
 	mutable std::map<std::string, OpticAudio> audio;

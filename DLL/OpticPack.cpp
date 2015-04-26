@@ -1,21 +1,17 @@
 #include "OpticPack.h"
 #include "xzip\XUnzip.h"
-#include "misc.h"
 #include "DebugHelper.h"
 #include <sstream>
 #include <memory>
 #include <iostream>
+#include <Windows.h>
 #include <boost\algorithm\string.hpp>
 
 namespace Optic {
 
 OpticPack::OpticPack(const std::string& fileName) {
-	std::cout << "Loading " << fileName << std::endl;
-	DebugHelper::DisplayAddress((DWORD)this, 16);
 	handle = open(fileName);
-	std::cout << "Meta for " << fileName << std::endl;
 	metadata = loadMeta(handle);
-	std::cout << "Assets for " << fileName << std::endl;
 	loadAssets();
 }
 
@@ -149,19 +145,18 @@ std::map<std::string, std::string> OpticPack::parseMeta(std::unique_ptr<char[]> 
 }
 
 HZIP OpticPack::open(const std::string& fileName) {
-	std::string fullPath = R"(C:\packs\)" + fileName;
-	std::cout << "Path: " << fullPath << std::endl;
+	char buff[1024];
+	GetCurrentDirectory(1024, buff);
+
+	std::string fullPath = buff + std::string("\\") + fileName;
 
 	HZIP handle = OpenZip((void*)fullPath.c_str(), 0, ZIP_FILENAME);
-	std::cout << "Opened: " << std::endl;
-
 
 	if(handle == NULL) {
 		std::cout << "Null zip" << std::endl;
 		throw OpticPackException("fail");
 	}
 
-	std::cout << "Got handle " << std::endl;
 	return handle;
 }
 

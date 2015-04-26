@@ -1,6 +1,5 @@
 #include "Direct3D.h"
 #include "Optic.h"
-#include "CustomChat.h"
 #include <d3dx9.h>
 
 namespace D3DHook {
@@ -16,7 +15,6 @@ void delayed() {
 		return;
 	}
 
-	Chat::enable();
 	Optic::load("halo3");
 	done = true;
 }
@@ -24,17 +22,14 @@ HRESULT __stdcall endScene(LPDIRECT3DDEVICE9 device) {
 	pDevice = device;
 	delayed();
 	Optic::render();
-	Chat::draw();
 	return originalEndScene(device);
 }
 
 HRESULT __stdcall reset(LPDIRECT3DDEVICE9 device, D3DPRESENT_PARAMETERS* pPresentationParameters) {
 	pDevice = device;
 	Optic::lost();
-	Chat::lost();
 	auto res = originalReset(device, pPresentationParameters);
 	Optic::reset();
-	Chat::reset();
 	return res;
 }
 

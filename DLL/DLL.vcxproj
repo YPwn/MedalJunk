@@ -76,20 +76,14 @@
   <ItemGroup>
     <ClCompile Include="Benchmark.cpp" />
     <ClCompile Include="codefinder.cpp" />
-    <ClCompile Include="console.cpp" />
-    <ClCompile Include="CustomChat.cpp" />
     <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="Direct3D.cpp" />
-    <ClCompile Include="EngineFunctions.cpp" />
     <ClCompile Include="EnginePointers.cpp" />
-    <ClCompile Include="EngineState.cpp" />
-    <ClCompile Include="EngineTypes.cpp" />
     <ClCompile Include="EventDispatcher.cpp" />
     <ClCompile Include="EventSubscriber.cpp" />
-    <ClCompile Include="FontHandler.cpp" />
+    <ClCompile Include="HookTest.cpp" />
     <ClCompile Include="InitHooks.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="misc.cpp" />
     <ClCompile Include="Optic.cpp" />
     <ClCompile Include="OpticAnimation.cpp" />
     <ClCompile Include="OpticAPI.cpp" />
@@ -105,7 +99,6 @@
     <ClCompile Include="OpticSprite.cpp" />
     <ClCompile Include="Patcher.cpp" />
     <ClCompile Include="PatchGroup.cpp" />
-    <ClCompile Include="Preferences.cpp" />
     <ClCompile Include="Shared.cpp" />
     <ClCompile Include="xde\xde.c" />
     <ClCompile Include="xzip\XUnzip.cpp" />
@@ -113,23 +106,17 @@
   <ItemGroup>
     <ClInclude Include="Benchmark.h" />
     <ClInclude Include="Codefinder.h" />
-    <ClInclude Include="console.h" />
-    <ClInclude Include="CustomChat.h" />
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="Direct3D.h" />
-    <ClInclude Include="encfont.h" />
-    <ClInclude Include="EngineFunctions.h" />
     <ClInclude Include="EnginePointers.h" />
-    <ClInclude Include="EngineState.h" />
     <ClInclude Include="EngineTypes.h" />
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="EventSubscriber.h" />
-    <ClInclude Include="FontHandler.h" />
+    <ClInclude Include="HookTest.h" />
     <ClInclude Include="IHook.h" />
     <ClInclude Include="InitHooks.h" />
     <ClInclude Include="libzplay.h" />
-    <ClInclude Include="misc.h" />
     <ClInclude Include="Optic.h" />
     <ClInclude Include="OpticAnimation.h" />
     <ClInclude Include="OpticAPI.h" />
@@ -146,7 +133,6 @@
     <ClInclude Include="OpticSprite.h" />
     <ClInclude Include="Patcher.h" />
     <ClInclude Include="PatchGroup.h" />
-    <ClInclude Include="Preferences.h" />
     <ClInclude Include="Shared.h" />
     <ClInclude Include="xde\xde.h" />
     <ClInclude Include="xzip\XUnzip.h" />

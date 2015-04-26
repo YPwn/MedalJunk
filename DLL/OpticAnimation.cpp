@@ -156,8 +156,8 @@ bool OpticAnimation::validTime(int time, TRANSFORM type) {
 
 OpticAnimation OpticAnimation::defaultAnimation() { //@todo move to different class
 	OpticAnimation animation;
-	animation.addKeyframe(Keyframe(0, 0.015f), KEYFRAME_POSITION_X);
-	animation.addKeyframe(Keyframe(0, 0.49f), KEYFRAME_POSITION_Y);
+	animation.addKeyframe(Keyframe(0, 0.065f), KEYFRAME_POSITION_X);
+	animation.addKeyframe(Keyframe(0, 0.62f), KEYFRAME_POSITION_Y);
 	animation.addKeyframe(Keyframe(0, 0.0f), KEYFRAME_OPACITY);
 	animation.addKeyframe(Keyframe(300, 1.0f), KEYFRAME_OPACITY);
 	animation.addKeyframe(Keyframe(3500, 1.0f), KEYFRAME_OPACITY);

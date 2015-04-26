@@ -1,5 +1,5 @@
 #include "EnginePointers.h"
 #include "EngineTypes.h"
 
-EngineTypes::Resolution* pResolution = new EngineTypes::Resolution();
-EngineTypes::ObjectsHeader** pObjectsHeader;
+EngineTypes::Resolution* pResolution;
+std::uint32_t* master_volume;

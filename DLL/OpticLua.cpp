@@ -5,7 +5,9 @@
 #include "lualib.h"
 #include "lauxlib.h"
 #include <Windows.h>
-
+#include "EnginePointers.h"
+#include "EngineTypes.h"
+#include <iostream>
 #define LUA_ENUM(L, name, val) \
   lua_pushlstring(L, #name, sizeof(#name)-1); \
   lua_pushnumber(L, val); \
@@ -42,32 +44,12 @@ void OpticLua::call(const std::string& function, std::shared_ptr<Event> event) {
 	int numargs = 0;
 	lua_getglobal(luaState, function.c_str());
 
-	if(event->type == PLAYER_KILLS) {
-		PlayerKilled* levent = reinterpret_cast<PlayerKilled*>(event.get());
-		lua_pushinteger(luaState, levent->event_id);
-		lua_pushinteger(luaState, levent->killer);
-		lua_pushinteger(luaState, levent->victim);
-		lua_pushinteger(luaState, levent->local);
-		lua_pushnumber(luaState, levent->time);
-		numargs = 5;
-	} else if(event->type == PLAYER_ENVIRONMENTAL_DEATHS) {
-		PlayerEnvironmentalDeath* levent = reinterpret_cast<PlayerEnvironmentalDeath*>(event.get());
-		lua_pushinteger(luaState, levent->event_id);
-		lua_pushinteger(luaState, levent->victim);
-		lua_pushinteger(luaState, levent->local);
-		lua_pushnumber(luaState, levent->time);
-		numargs = 4;
-	} else if(event->type == CTF_EVENT) {
-		CTFEvent* levent = reinterpret_cast<CTFEvent*>(event.get());
-		lua_pushinteger(luaState, levent->event_id);
-		lua_pushinteger(luaState, levent->killer);
-		lua_pushinteger(luaState, levent->killed);
-		lua_pushinteger(luaState, levent->local);
-		lua_pushnumber(luaState, levent->time);
-		numargs = 5;
+	if(event->type == H3_GAME_EVENT) {
+		GameEvent* levent = reinterpret_cast<GameEvent*>(event.get());
+		lua_pushnumber(luaState, levent->event_id);
+		numargs = 1;
 	}
 
-	OutputDebugString(function.c_str());
 	if(lua_pcall(luaState, numargs, 0, 0) != 0) {
 		std::string error = lua_tostring(luaState, -1);
 		lua_pop(luaState, 1);
@@ -109,19 +91,7 @@ void OpticLua::registerCallbacks(OpticEventHandler* handler) {
 void OpticLua::createEventTable() {
 	lua_newtable(luaState);
 	int i = 1;
-	LUA_ENUM(luaState, RESOLUTION_CHANGE, i++);
-    LUA_ENUM(luaState, POST_MAP_LOAD, i++);
-	LUA_ENUM(luaState, QUEUE_JOIN, i++);
-	LUA_ENUM(luaState, QUEUE_LEAVE, i++);
-	LUA_ENUM(luaState, HUD_RECOLOURED, i++);
-	LUA_ENUM(luaState, FOV_ADJUSTED, i++);
-	LUA_ENUM(luaState, PLAYER_KILLS, i++);
-	LUA_ENUM(luaState, PLAYER_ENVIRONMENTAL_DEATHS, i++);
-	LUA_ENUM(luaState, CTF_EVENTS, i++);
-	LUA_ENUM(luaState, GAME_OVER, i++);
-	LUA_ENUM(luaState, PCR_SHOW, i++);
-	LUA_ENUM(luaState, PCR_EXIT_SHOW, i++);
-	LUA_ENUM(luaState, HIT_DETECT, i++);
+	LUA_ENUM(luaState, H3_GAME_EVENT, i++);
 	lua_setglobal(luaState, "cb");
 }
 

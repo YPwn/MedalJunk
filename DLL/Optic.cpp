@@ -2,13 +2,10 @@
 #include "OpticPack.h"
 #include "OpticLua.h"
 #include "OpticAPI.h"
-#include "misc.h"
-#include "console.h"
 #include "OpticEventHandler.h"
 #include "OpticHooks.h"
 #include "OpticMisc.h"
 #include "EventDispatcher.h"
-#include "CustomChat.h"
 #include "Shared.h"
 #include <sstream>
 #include <shlobj.h>
@@ -40,11 +37,11 @@ void load(const std::string& name) {
 		CloseHandle(handle);
 		std::cout << "Optic pack loaded!";
 	} catch(OpticException& e) {
-		std::cout << e.what();
+		std::cout << "OpticException: " << e.what();
 	} catch(std::exception& e) {
-		std::cout << e.what();
+		std::cout << "Exception: " <<  e.what();
 	} catch(...) {
-		Chat::medalText("Optic fail");
+		std::cout << "Unknown failure";
 	}
 }
 
@@ -54,7 +51,7 @@ void unload() {
 		handler->wait();
 		handler.reset();
 		Optic::Hooks::uninstall();
-		Chat::medalText("Unloaded");
+		std::cout << "Unloaded Optic pack";
 	}
 }
 
@@ -71,7 +68,7 @@ void lost() {
 }
 
 void list() {
-	std::string expression = getWorkingDir() + "packs\\*.zip";
+	std::string expression = "packs\\*.zip";
 	WIN32_FIND_DATA FindFileData;
 	HANDLE search = FindFirstFile(expression.c_str(), &FindFileData);
 
@@ -81,35 +78,30 @@ void list() {
 			try {
 				OpticPackMeta meta = OpticPack::meta(FindFileData.cFileName);
 				ss << meta.name << " by " << meta.author << " - " << meta.description;
-				C_TEXT_COLOUR colour = C_TEXT_GREEN;
 
 				Version version = {1, 0, 0};
 				int status = versionCheck(meta.apiVersion, version);
 
 				if(status == VERSION_RELATION::TENTATIVE_OKAY) {
 					ss << " (out of date)";
-					colour = C_TEXT_YELLOW;
 				} else if(status == VERSION_RELATION::VERSION_IN_FUTURE) {
 					ss << " (version in future?)";
-					colour = C_TEXT_RED;
 				} else if(status == VERSION_RELATION::UNKNOWN_VERSION) {
 					ss << " (invalid version)";
-					colour = C_TEXT_RED;
 				} else if(status == VERSION_RELATION::OUT_OF_DATE) {
 					ss << " (out of date)";
-					colour = C_TEXT_RED;
 				}
 				
-				Chat::medalText(ss.str());
+				std::cout <<ss.str();
 			} catch(OpticPackException& e) {
 				ss << FindFileData.cFileName << " - " << e.what();
-				Chat::medalText(ss.str());
+				std::cout << ss.str() << std::endl;
 			}
 		} while(FindNextFile(search, &FindFileData) != 0);
 
 		FindClose(search);
 	} else {
-		Chat::medalText("error");
+		std::cout << "Error" << std::endl;
 	}
 }
 

@@ -40,12 +40,14 @@ void OpticMedal::init(int x, int y) {
 void OpticMedal::addSprite(OpticSprite sprite) {
 	sprites.emplace_back(sprite);
 	
-	if(sprite.dimensions().first > _dimensions.first) {
+	auto& dimensions = sprite.dimensions();
+
+	if(dimensions.first > _dimensions.first) {
 		_dimensions.first = sprite.dimensions().first;
 	}
 
-	if(sprite.dimensions().second > _dimensions.second) {
-		_dimensions.second = sprite.dimensions().second;
+	if(dimensions.second > _dimensions.second) {
+		_dimensions.second = dimensions.second;
 	}
 
 	this->transformCentre = D3DXVECTOR2(_dimensions.first * 0.5f, _dimensions.second * 0.5f);
@@ -87,7 +89,7 @@ bool OpticMedal::draw(LPD3DXSPRITE sprite) {
 	double offset_x = spawnOffsetX;
 	double offset_y = spawnOffsetY;
 
-	for(auto i = sliders.begin(); i != sliders.end(); i++) {
+	for(auto i = sliders.begin(); i != sliders.end(); ++i) {
 		OpticAnimation& animation = std::get<0>(*i);
 		AnimationState& state = std::get<1>(*i);
 		double time = std::get<2>(*i).current();
@@ -114,7 +116,7 @@ bool OpticMedal::draw(LPD3DXSPRITE sprite) {
 
 	/* Faster to erase all of the sprites at once rather than one
 	   by one when they've finished drawing */
-	for(auto i = sprites.begin(); i != sprites.end(); i++) {
+	for(auto i = sprites.begin(); i != sprites.end(); ++i) {
 		keepDrawing |= i->draw(sprite, time, colour, offset_x, offset_y);
 	}
 
@@ -164,10 +166,10 @@ OpticAnimation OpticMedal::defaultSlideAnimation() {
 
 OpticAnimation OpticMedal::defaultEndSlideAnimation(double beginX, double beginY) {
 	OpticAnimation animation;
-	animation.addKeyframe(Keyframe(0, beginX), KEYFRAME_POSITION_X);
+	/*animation.addKeyframe(Keyframe(0, beginX), KEYFRAME_POSITION_X);
 	animation.addKeyframe(Keyframe(0, beginY), KEYFRAME_POSITION_Y);
 	animation.addKeyframe(Keyframe(300, 0.0f), KEYFRAME_POSITION_X);
-	animation.addKeyframe(Keyframe(300, 0.0f), KEYFRAME_POSITION_Y);
+	animation.addKeyframe(Keyframe(300, 0.0f), KEYFRAME_POSITION_Y);*/
 	return animation;
 }
 

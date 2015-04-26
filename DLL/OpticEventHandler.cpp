@@ -3,7 +3,6 @@
 #include "OpticLua.h"
 #include "OpticAPI.h"
 #include "Direct3D.h"
-#include "console.h"
 #include "OpticRender.h"
 #include "OpticMisc.h"
 #include "Shared.h"
@@ -37,10 +36,9 @@ void OpticEventHandler::processQueue() {
 		}
 
 		try {
-			std::cout << "Handling event" << std::endl;
 			oLua.call(callbacks[event->type], event);
 		} catch(OpticLuaException& e) {
-			std::cout << e.what() << std::endl;
+			std::cout << "Exception: " << e.what() << std::endl;
 			exit = true;
 		}
 	}

@@ -92,8 +92,8 @@ int OpticSprite::draw(LPD3DXSPRITE sprite, double time, D3DXCOLOR colour, double
 		float rotation = 6.28318531f * aniState.rotation;
 		D3DXMATRIX mat, current;
 		D3DXVECTOR2 scaling(aniState.scale_x, aniState.scale_y);
-		D3DXVECTOR2 position(floor(((2560 * aniState.position_x) - translateCentre.x) + offsetX),
-							 floor(((1440 * aniState.position_y) - translateCentre.y) + offsetY));
+		D3DXVECTOR2 position(floor(((pResolution->width * aniState.position_x) - translateCentre.x) + offsetX),
+							 floor(((pResolution->height * aniState.position_y) - translateCentre.y) + offsetY));
 		D3DXMatrixTransformation2D(&mat, &transformCentre, 0.0f, &scaling, &transformCentre, rotation, &position);
 		sprite->GetTransform(&current);
 		mat *= current;

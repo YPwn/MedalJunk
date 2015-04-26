@@ -1,11 +1,8 @@
 #include "OpticRender.h"
 #include "OpticPack.h"
 #include "Direct3D.h"
-#include "EngineFunctions.h"
 #include "EnginePointers.h"
 #include "EngineTypes.h"
-#include "Preferences.h"
-#include "CustomChat.h"
 #include <algorithm>
 #include <sstream>
 #include "DebugHelper.h"
@@ -42,15 +39,13 @@ void OpticRender::lost() {
 }
 
 void OpticRender::draw() {
-	std::lock_guard<std::mutex> guard(hacky_fix);
-
 	if(sprite->Begin(D3DXSPRITE_ALPHABLEND) != S_OK) {
 		throw OpticRenderException("Direct3D failed to draw sprite!");
 	}
 
 	D3DXMATRIX mat, oldMat;
 	D3DXMatrixIdentity(&mat);
-	mat._12 = -0.040f;
+	mat._12 = -0.050f;
 
 	sprite->GetTransform(&oldMat);
 	sprite->SetTransform(&mat);
@@ -75,8 +70,6 @@ void OpticRender::draw() {
 }
 
 LPDIRECT3DTEXTURE9 OpticRender::createTexture(const OpticImage& image) {
-	std::lock_guard<std::mutex> guard(hacky_fix);
-	std::cout << "Creating texture" << std::endl;
 	LPDIRECT3DTEXTURE9 texture = NULL;
 	D3DXIMAGE_INFO info;
 	
@@ -93,12 +86,6 @@ LPDIRECT3DTEXTURE9 OpticRender::createTexture(const OpticImage& image) {
 	HRESULT res = D3DXCreateTextureFromFileInMemoryEx(D3DHook::pDevice, image.second.get(), image.first, info.Width, info.Height,
 	                                                  D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT,
 	                                                  D3DX_DEFAULT, 0, NULL, NULL, &texture);
-
-	std::cout << image.first << std::endl;
-	std::cout << image.second.get() << std::endl;
-	std::cout << info.Width << std::endl;
-	std::cout << info.Height << std::endl;
-
 	if(res != D3D_OK) {
 		std::stringstream ss;
 		ss << "Direct3D was unable to create texture. Error code: " << res;
@@ -110,7 +97,6 @@ LPDIRECT3DTEXTURE9 OpticRender::createTexture(const OpticImage& image) {
 }
 
 void OpticRender::renderMedal(const OpticImage& image, const std::string& animationName) {
-	std::lock_guard<std::mutex> guard(hacky_fix);
 	try {
 		OpticAnimation animation = animationName == "default"? OpticAnimation::defaultAnimation() :
 		                                                       animations.at(animationName);
@@ -125,7 +111,6 @@ void OpticRender::renderMedal(const OpticImage& image, const std::string& animat
 }
 
 void OpticRender::renderMedal(const std::string& name) {
-	std::lock_guard<std::mutex> guard(hacky_fix);
 	try {
 		queueMedal(medals.at(name));
 	} catch(std::out_of_range) {
@@ -134,7 +119,7 @@ void OpticRender::renderMedal(const std::string& name) {
 }
 
 void OpticRender::displayText(const std::string& text) {
-	Chat::medalText(text);
+	// gone
 }
 
 void OpticRender::queueMedal(OpticMedal& medal) {

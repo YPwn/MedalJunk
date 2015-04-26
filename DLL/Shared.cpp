@@ -1,8 +1,10 @@
 #include "Shared.h"
+#include "EnginePointers.h"
 
-bool* map_reset;
-bool* game_close;
-std::uint32_t* map_type;
-char* map_name;
-PatchGroup* initial_load;
 EventDispatcher* dispatcher;
+
+void __declspec(naked) volume_adjust() {
+	__asm {
+		mov master_volume, ecx
+	}
+}

@@ -46,7 +46,7 @@ void EventSubscriber::subscribe(const EventSubscriber* sub, const std::vector<EV
 void EventSubscriber::unsubscribe(const EventSubscriber* sub, EVENTS type) const {
 	EnterCriticalSection(&handlerLock);
 
-	for(auto it = handlers[type].begin(); it != handlers[type].end(); it++) {
+	for(auto it = handlers[type].begin(); it != handlers[type].end(); ++it) {
 		if(*it == sub) {
 			handlers[type].erase(it);
 			break;

@@ -107,7 +107,7 @@ bool CaveHook::install() {
 	} else if(type == NAKED) {
 		*pReturn = PatchAddress + copied;
 	} else if(type == CALL_DETOUR) {
-		*pReturn = destination + 9;
+		*pReturn = destination + 7;
 	} else if(type == CALL_NO_TP && pReturn != NULL) {
 		*pReturn = *(std::uintptr_t*)(PatchAddress + 1) + PatchAddress + 5;
 	}

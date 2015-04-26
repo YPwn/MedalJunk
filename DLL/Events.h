@@ -3,43 +3,89 @@
 #include <string>
 #include <cstdint>
 
+// this isn't actually used anywhere 
+enum class GameEvents : std::uint32_t {
+	KILL = 14110,
+	SUICIDE = 14112,
+	BOARDED_VEHICLE = 14158,
+	/*STEAKTACULAR,
+	LINKTACULAR,*/
+	DEATH_FROM_THE_GRAVE,
+	LASER_KILL = 14178,
+	GRENADE_STICK = 14147,
+	INCINERATION = 14180,
+	KILLJOY = 14268,
+	ASSASSIN = 14155,
+	BEAT_DOWN = 14141,
+	EXTERMINATION = 14199,
+	BULLTRUE = 14171,
+	KILLING_SPREE = 14221,
+	KILLING_FRENZY = 14223,
+	RUNNING_RIOT = 14225,
+	RAMPAGE = 14227,
+	UNTOUCHABLE = 14229,
+	INVINCIBLE = 14231,
+	DOUBLE_KILL = 14203,
+	TRIPLE_KILL = 14205,
+	OVERKILL = 14207,
+	KILLTACULAR = 14209,
+	KILLTROCITY = 14211,
+	KILLIMANJARO = 14213,
+	KILLTASTROPHE = 14215,
+	KILLPOCALYPSE = 14217,
+	KILLIONAIRE = 14219,
+	SNIPER_KILL = 14151,
+	SNIPER_SPREE = 14233,
+	SHARPSHOOTER = 14235,
+	SHOTGUN_SPREE = 14237,
+	OPEN_SEASON = 14239,
+	SWORD_SPREE = 14245,
+	SLICE_N_DICE = 14247,
+	SPLATTER = 14137,
+	SPLATTER_SPREE = 14241,
+	VEHICULAR_MANSLAUGHTER = 14243,
+	WHEELMAN = 14183,
+	HIGHJACKER = 14174,
+	SKYJACKER = 14176,
+	KILLED_VEHICLE = 14182,
+	KILLED_VIP = 14328, // or 14329, 14330
+	BOMB_PLANTED = 14361, // or 14362
+	KILLED_BOMB_CARRIER = 22083,
+	FLAG_SCORE = 14299,
+	KILLED_FLAG_CARRIER = 22082,
+	FLAG_KILL = 24984, // wrong, probably
+	HAIL_TO_THE_KING = 14261,
+	ODDBALL_KILL = 24991, // or 24992, 24993, 24994
+	PERFECTION = 14201,
+	KILLED_JUGGERNAUT = 14339, // or 14338
+	JUGGERNAUT_SPREE = 14249,
+	UNSTOPPABLE = 14251,
+	LAST_MAN_STANDING = 14367, // or 14375
+	INFECTION_SPREE = 14253,
+	MMMM_BRAINS = 14255,
+	ZOMBIE_KILLING_SPREE = 14257,
+	HELLS_JANITOR = 14259,
+	KOTH_START_ANNOUNCE = 14316,
+	SLAYER_START_ANNOUNCE = 14294,
+	CTF_START_ANNOUNCE = 14296,
+	ODDBALL_START_ANNOUNCE = 14311,
+	INFECTION_START_ANNOUNCE = 14368,
+	TERRITORIES_START_ANNOUNCE =  14341,
+	ASSAULT_START_ANNOUNCE = 14348,
+	SLAYER_FFA_START_ANNOUNCE = 24857,
+	HEADHUNTER_START_ANNOUNCE = 24961,
+	// NOT HALO 3
+	NEMESIS = 14288,
+	REVENGE = 14290,
+	ZOMBIE_SPREE_15 = 24956
+};
+
 enum EVENTS : unsigned int {
 	LUA_API_SAFE_BEGIN, //this might be an abuse of enums
-		RESOLUTION_CHANGE,
-		POST_MAP_LOAD,
-		QUEUE_JOIN,
-		QUEUE_LEAVE,
-		HUD_RECOLOURED,
-		FOV_ADJUSTED,
-		PLAYER_KILLS,
-		PLAYER_ENVIRONMENTAL_DEATHS,
-		CTF_EVENT,
-		GAME_OVER,
-		PCR_SHOW,
-		PCR_EXIT_SHOW,
-		HIT_DETECT,
+		H3_GAME_EVENT,
 	LUA_API_SAFE_END,
-	
+
 	THREAD_EXIT,
-	CONNECTION_LOST,
-	CONNECTION_ESTABLISHED,
-	NO_CONNECTION,
-	LOGIN_ATTEMPT,
-	LOGIN_SUCCESS,
-	LOGIN_FAIL,
-	ALREADY_LOGGED_IN,
-	NOT_LOGGED_IN,
-	INSUFFICIENT_RIGHTS,
-	USER_LOGGED_IN,
-	USER_LOGGED_OUT,
-	USER_JOIN_GAME,
-	USER_LEAVE_GAME,
-	USER_IS_CHEATING,
-	OPTIC_SOUND_TRIGGER,
-	PING_ANTICHEAT_THREAD,
-	PONG_ANTICHEAT_THREAD,
-	REQUEST_ANTICHEAT_THREAD_HANDLE,
-	ANTICHEAT_THREAD_HANDLE,
 	LAST //this too
 };
 
@@ -48,48 +94,8 @@ struct Event {
 	EVENTS type;
 };
 
-struct LoginEvent : Event {
-	LoginEvent(std::string username, std::string password)
-	 : Event(LOGIN_ATTEMPT), username(username), password(password) {}; 
-	std::string username;
-	std::string password;
-};
-
-struct PlayerKilled : Event {
-	PlayerKilled(std::uint32_t event_id, std::uint32_t victim, std::uint32_t killer, std::uint32_t local, std::uint32_t time)
-		: Event(PLAYER_KILLS), event_id(event_id), victim(victim), killer(killer), local(local), time(time) {};
-	std::uint32_t event_id, victim, killer, local;
-	std::uint32_t time;
-};
-
-struct PlayerEnvironmentalDeath : Event {
-	PlayerEnvironmentalDeath(std::uint32_t event_id, std::uint32_t victim, std::uint32_t local, std::uint32_t time)
-		: Event(PLAYER_ENVIRONMENTAL_DEATHS), event_id(event_id), victim(victim), local(local), time(time) {};
-	std::uint32_t event_id, victim, local;
-	std::uint32_t time;
-};
-
-struct CTFEvent : Event {
-	CTFEvent(std::uint32_t event_id, std::uint32_t killed, std::uint32_t killer, std::uint32_t local, std::uint32_t time)
-		: Event(CTF_EVENT), event_id(event_id), killed(killed), killer(killer), local(local), time(time) {};
-	std::uint32_t event_id, killed, killer, local;
-	std::uint32_t time;
-};
-
 struct GameEvent : Event {
-
-};
-
-struct CheatEvent : Event {
-
-};
-
-struct ThreadHandleEvent : Event {
-	ThreadHandleEvent(void* thread) : Event(ANTICHEAT_THREAD_HANDLE), acthread(thread) {}; 
-	void* acthread;	
-};
-
-struct OpticSoundEvent : Event {
-	OpticSoundEvent(std::string sound) : Event(OPTIC_SOUND_TRIGGER), file(sound) {}; 
-	std::string file;	
+	GameEvent(std::uint16_t event_id)
+		: Event(H3_GAME_EVENT), event_id(event_id) {};
+	std::uint32_t event_id;
 };

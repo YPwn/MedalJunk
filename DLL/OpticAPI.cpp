@@ -3,10 +3,8 @@
 #include "OpticPack.h"
 #include "OpticRender.h"
 #include "OpticAnimation.h"
-#include "EngineFunctions.h"
 #include "EngineTypes.h"
 #include "EnginePointers.h"
-#include "console.h"
 #include "OpticEventHandler.h"
 #include "OpticHooks.h"
 #include "DebugHelper.h"
@@ -237,42 +235,6 @@ int add_keyframe(lua_State* state) {
 }
 
 
-int hud_message(lua_State* state) {
-	lua_getglobal(state, "renderer");
-	OpticRender* render = static_cast<OpticRender*>(lua_touserdata(state, -1));
-	lua_pop(state, 1);
-	
-	for(int i = 1, j = lua_gettop(state); i <= j; i++) {
-		render->displayText(lua_tostring(state, i));
-	}
-
-	return 0;
-}
-
-int console_print(lua_State* state) {
-	int args = lua_gettop(state);
-
-	if(args != 2) {
-		return luaL_error(state, "Invalid number of arguments for console printing");
-	}
-
-	if(!lua_isnumber(state, 2)) {
-		return luaL_argerror(state, 2, "Colour expected");
-	}
-
-	if(!lua_isstring(state, 1)) {
-		return luaL_argerror(state, 1, "Message string expected");
-	}
-
-	try {
-		std::cout <<  lua_tostring(state, 1) << std::endl;
-	} catch(std::runtime_error& e) {
-		return luaL_error(state, e.what());
-	}
-	
-	return 0;
-}
-
 int register_callback(lua_State* state) {
 	int args = lua_gettop(state);
 
@@ -388,7 +350,6 @@ int display_medal(lua_State* state) {
 		} else {
 			std::string name = lua_tostring(state, 1);
 			if(render->medalExists(name)) {
-				std::cout << "Found" << std::endl;
 				render->renderMedal(name);
 			} else {
 				
@@ -437,10 +398,7 @@ int queue_audio(lua_State* state) {
 	return 0;
 }
 
-
 void registerFunctions(lua_State* state) {
-	lua_register(state, "hud_message", hud_message);
-	lua_register(state, "console_print", console_print);
 	lua_register(state, "register_callback", register_callback);
 	lua_register(state, "display_medal", display_medal);
 	lua_register(state, "attach_sprite", attach_sprite);
@@ -454,4 +412,4 @@ void registerFunctions(lua_State* state) {
 	lua_register(state, "queue_audio", queue_audio);
 }
 
-}};
+}}

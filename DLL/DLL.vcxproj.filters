@@ -22,12 +22,6 @@
     <Filter Include="Source Files\Optic">
       <UniqueIdentifier>{0aa447f6-1d58-4dfd-a08e-157105cdcc39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chat">
-      <UniqueIdentifier>{2352fbc4-f8a6-48ab-8642-162477dd0c64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="NewFilter1">
-      <UniqueIdentifier>{9a804e5e-7994-4d6f-82a6-309c64ae60e0}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -96,43 +90,22 @@
     <ClCompile Include="OpticSprite.cpp">
       <Filter>Source Files\Optic</Filter>
     </ClCompile>
-    <ClCompile Include="CustomChat.cpp">
-      <Filter>Source Files\Chat</Filter>
-    </ClCompile>
     <ClCompile Include="xzip\XUnzip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Benchmark.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EnginePointers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineTypes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EventSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="console.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EventDispatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Preferences.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FontHandler.cpp">
+    <ClCompile Include="HookTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,9 +179,6 @@
     <ClInclude Include="OpticSprite.h">
       <Filter>Source Files\Optic</Filter>
     </ClInclude>
-    <ClInclude Include="CustomChat.h">
-      <Filter>Source Files\Chat</Filter>
-    </ClInclude>
     <ClInclude Include="libzplay.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -221,38 +191,20 @@
     <ClInclude Include="Events.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EnginePointers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EngineTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="misc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EventSubscriber.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EventDispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Preferences.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="encfont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FontHandler.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="HookTest.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

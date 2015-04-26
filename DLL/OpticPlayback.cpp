@@ -14,7 +14,7 @@ OpticPlayback::~OpticPlayback() {
 }
 
 void OpticPlayback::play(OpticAudio audio) {
-	player->SetPlayerVolume(100, 100);
+	player->SetPlayerVolume(*master_volume, *master_volume);
 	
 	if(!playing) {
 		player->OpenStream(0, 1, audio.second.get(), audio.first, libZPlay::sfMp3);

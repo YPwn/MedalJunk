@@ -1,21 +1,19 @@
 #include "InitHooks.h"
 #include "Patcher.h"
 #include "codefinder.h"
+#include "EngineTypes.h"
+#include "EnginePointers.h"
 #include "PatchGroup.h"
 #include "Shared.h"
 #include "Direct3D.h"
 #include "DebugHelper.h"
+#include "HookTest.h"
 #include <sstream>
 #include <string>
 #include <d3d9.h>
 #include <iostream>
 
 namespace HookManager {
-
-void find_close();
-void find_reset();
-void find_map_type();
-void find_map_name();
 
 LAUNCHCB launchCB, quitCB;
 void* launchArg = NULL, * quitArg = NULL;
@@ -25,10 +23,12 @@ void installHooks();
 PatchGroup* launch_event_hook();
 void installPatches();
 void locateAddresses();
-//PatchGroup* reactor_mp_patch();
 PatchGroup* d3dHooks();
 PatchGroup* secondaryD3DHook();
 PatchGroup* tertiaryD3DHook();
+PatchGroup* event_hook();
+void find_resolution();
+void find_volume();
 
 void launchCallback(LAUNCHCB callback, void* data) {
 	launchCB = callback;
@@ -57,7 +57,6 @@ void launchHook() {
 }
 
 void post_launch() {
-	MessageBox(NULL, "1", "1", 0);
 	hooks.emplace_back(d3dHooks());
 }
 
@@ -68,81 +67,71 @@ void quitHook() {
 }
 
 void installPatches() {
-	//hooks.emplace_back(reactor_mp_patch());
+
 }
-
-PatchGroup* testing();
-
-void net_log(char* message) {
-	std::cout << message << std::endl;
-}
-__declspec(naked) void net_log_stub() {
-	__asm {
-		push eax
-		lea eax, [esp + 4]
-		push eax
-		call net_log
-		add esp, 4
-		pop eax
-	}
-}
-
-
-PatchGroup* network_log() {
-	MessageBox(NULL, "1", "1", 0);
-	short signature[] = { 0x55, 0x8B, 0xEC, 0x80, 0x3D, 0x38, 0xFB, 0x43, 0x02, 0x00, 0x75, 0x18 };
-	MessageBox(NULL, "1", "2", 0);					  
-	PatchGroup *group = new PatchGroup();
-	MessageBox(NULL, "1", "3", 0);
-	group->add(new CaveHook(signature, sizeof(signature) / 2, 0, net_log_stub, CaveHook::JMP_TP));
-	MessageBox(NULL, "1", "4", 0);
-	if(!group->install()) {
-		MessageBox(NULL, "1", "5", 0);
-		delete group;
-		DebugHelper::Translate("Net log hook failed :(");
-		throw HookException("Net log failed!");
-	}
-	MessageBox(NULL, "1", "6", 0);
-	DebugHelper::Translate("Net log hook installed :)");
-	return group;
-}
-
 
 void installHooks() {
-	//hooks.emplace_back(network_log());
-	hooks.emplace_back(testing());
+	hooks.emplace_back(event_hook());
 }
 
 void locateAddresses() {
-	find_close();
-	find_reset();
-	find_map_type();
-	find_map_name();
+	find_resolution();
+	find_volume();
 }
 
-PatchGroup* testing() {
-	short signature[] = { 0x66, 0x29, 0x94, 0x31, 0x8e, 0x02, 0x00, 0x00, 0xE8 };
+void find_volume() {
+	short signature[] = { 0xC7, 0x86, 0x18, 0x00, 0x00, 0x00, -1, -1, -1, -1,
+		0x8B, 0x96, 0x18, 0x00, 0x00, 0x00, 0x8B, 0x4D, 0x08, 0x89, 0x8A, 0x50, 0x1C, 0x04, 0x00 };
+
+	DWORD address = FindCode(GetModuleHandle(0), signature, sizeof(signature) / 2);
+
+	if(address != NULL) {
+		address += 6;
+		std::uint8_t* vol = (std::uint8_t*)*(std::uintptr_t*)address;
+		vol += 0x41C50;
+		master_volume = (std::uint32_t*)vol;
+	} else {
+		throw HookException("Failed to locate resolution information");
+	}
+}
+
+void find_resolution() {
+	short signature[] = { 0x66, 0x0F, 0x6E, 0x0D, -1, -1, -1, -1, 0x66, 0x0F, 0x6E, 0x05,
+		-1, -1, -1, -1, 0x0F, 0x5B, 0xC9, 0x0F, 0x5B, 0xC0, 0x33 };
+	DWORD address = FindCode(GetModuleHandle(0), signature, sizeof(signature) / 2);
+
+	if(address != NULL) {
+		address += 4;
+		pResolution = (EngineTypes::Resolution*)*(DWORD*)address;
+	} else {
+		throw HookException("Failed to locate resolution information");
+	}
+}
+
+PatchGroup* event_hook() {
+	short signature[] = { 0x51, 0xE8, -1, -1, -1, -1, 0x83, 0xC4, 0x0C, 0x85, 0xC0, 0x74, 0x32, 
+		0x6A, 0x00, 0x68, 0x00, 0x01, 0x00, 0x00, 0x8D, 0x8D, -1, -1, -1, -1, 0x51, 0x50 };
 
 	PatchGroup *group = new PatchGroup();
-	group->add(new CaveHook(signature, sizeof(signature) / 2, 0, Test, CaveHook::CALL_TP));
+	group->add(new CaveHook(signature, sizeof(signature) / 2, 1, event_filter, CaveHook::CALL_DETOUR,
+		reinterpret_cast<std::uintptr_t*>(&original_event_filter)));
 
 	if(!group->install()) {
 		delete group;
-		throw HookException("Firing hook failed!");
+		throw HookException("Event hook failed!");
 	}
 
-	DebugHelper::Translate("Hook installed :)");
 	return group;
 }
 
 PatchGroup* d3dHooks() {
-	PatchGroup* group = secondaryD3DHook();
+	PatchGroup* group = tertiaryD3DHook();
 
 	if(group) {
 		return group;
 	}
 
-	group = tertiaryD3DHook();
+	group = secondaryD3DHook();
 
 	if(group) {
 		return group;
@@ -242,7 +231,6 @@ PatchGroup* tertiaryD3DHook() {
 		reinterpret_cast<std::uintptr_t*>(&D3DHook::originalEndScene))); 
 	group->add(new CaveHook(vtable[16], 0, D3DHook::reset, CaveHook::CALL_DETOUR,
 		reinterpret_cast<std::uintptr_t*>(&D3DHook::originalReset)));
-		DebugHelper::DisplayAddress((DWORD)vtable[42], 16);
 
 	if(!group->install()) {
 		OutputDebugString("Unable to hook D3D functions");
@@ -251,59 +239,6 @@ PatchGroup* tertiaryD3DHook() {
 	}
 
 	return group;
-}
-
-//PatchGroup* reactor_mp_patch() {
-//	short signature[] = {0x00, 0x00, 0x00, 0x00, 0xC3, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xC6, 0x05,
-//	                     -1, -1, -1, -1, 0x01, 0xC3, 0xCC};
-//	BYTE replacement[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-//
-//	PatchGroup *group = new PatchGroup();
-//	group->add(new PatchHook(signature, sizeof(signature) / 2, 10, replacement, 7));
-//
-//	if(!group->install()) {
-//		delete group;
-//		throw HookException("Failed to apply FoV zoom rendering fix!");
-//	}
-//
-//	return group;
-//}
-
-void find_map_name() {
-	map_name = ((char*)map_type) + 0x24; // erp.
-}
-
-void find_close() {
-	short signature[] = {-1, -1, -1, -1, 0x00, 0x8B, 0xF8, 0x0F, 0x85};
-	std::uintptr_t pClose = FindCode(GetModuleHandle(0), signature, sizeof(signature) / 2);
-
-	if(pClose != NULL) {
-		game_close = (bool*)*(std::uintptr_t*)pClose;
-	} else {
-		throw HookException("Unable to locate close bool");
-	}
-}
-
-void find_reset() {
-	short signature[] = {-1, -1, -1, -1, 0x00, 0x74, 0x16, 0x80, 0x3D, -1, -1, -1, -1, 0x00, 0x75, 0x0D};
-	std::uintptr_t pReset = FindCode(GetModuleHandle(0), signature, sizeof(signature) / 2);
-
-	if(pReset != NULL) {
-		map_reset = (bool*)*(std::uintptr_t*)pReset;
-	} else {
-		throw HookException("Unable to locate reset bool");
-	}
-}
-
-void find_map_type() {
-	short signature[] = {-1, -1, -1, -1, 0x03, 0x0F, 0x94, 0xC0, 0xC3, 0x32, 0xC0};
-	std::uintptr_t pType = FindCode(GetModuleHandle(0), signature, sizeof(signature) / 2);
-
-	if(pType != NULL) {
-		map_type = (std::uint32_t*)*(std::uintptr_t*)pType;
-	} else {
-		throw HookException("Unable to locate map type");
-	}
 }
 
 };
