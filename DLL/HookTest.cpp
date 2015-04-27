@@ -6,7 +6,7 @@
 
 tFilter original_event_filter;
 
-char* event_filter(std::uint32_t tag_id, std::uint32_t some_other_id, std::uint32_t unk) {
+char* event_filter(std::uint32_t some_other_id, std::uint32_t tag_id, std::uint32_t unk) {
 	dispatcher->enqueue(std::make_shared<GameEvent>(tag_id));
-	return original_event_filter(tag_id, some_other_id, unk);
+	return original_event_filter(some_other_id, tag_id, unk);
 }

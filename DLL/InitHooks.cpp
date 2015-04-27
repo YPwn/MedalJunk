@@ -113,7 +113,7 @@ PatchGroup* event_hook() {
 		0x6A, 0x00, 0x68, 0x00, 0x01, 0x00, 0x00, 0x8D, 0x8D, -1, -1, -1, -1, 0x51, 0x50 };
 
 	PatchGroup *group = new PatchGroup();
-	group->add(new CaveHook(signature, sizeof(signature) / 2, 1, event_filter, CaveHook::CALL_DETOUR,
+	group->add(new CaveHook(signature, sizeof(signature) / 2, 1, event_filter, CaveHook::CALL_NO_TP,
 		reinterpret_cast<std::uintptr_t*>(&original_event_filter)));
 
 	if(!group->install()) {
